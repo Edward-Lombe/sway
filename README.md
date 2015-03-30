@@ -1,0 +1,1 @@
+Renders a moving swaying backgroung using a HTML5 canvas. Still very much a WIP. Inspired by [trianglify](https://github.com/qrohlf/trianglify), color scheme ripped from [flatuicolorpicker](http://www.flatuicolorpicker.com). May turn lower powered computers into leaf blowers.
