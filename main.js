@@ -32,7 +32,7 @@
 		console.log(iTriangleSize);
 		rows = 5;
 		columns = 0;
-		while (columns * iTriangleSize < iWindowWidth + iTriangleSize) columns++;
+		while (columns * iTriangleSize < iWindowWidth + (iTriangleSize * 1.5)) columns++;
 			
 		document.getElementById('canvas').width = iWindowWidth;
 		document.getElementById('canvas').height = iWindowHeight;
