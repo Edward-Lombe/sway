@@ -1,28 +1,42 @@
 'use strict';
 (function sway() {
+	var iWindowWidth = window.innerWidth,
+		iWindowHeight = window.innerHeight,
+		iTriangleSize = 100,
+		rows = 0,
+		columns = 0;
 
 	(function init() {
-	    window.addEventListener('resize', resizeCanvas, false);
-
-	    function resizeCanvas() {
-	        document.getElementById('canvas').width = window.innerWidth;
-	        document.getElementById('canvas').height = window.innerHeight;
-	    }
-
-	    function frame () {
-			draw(aMovementArray, aColorArray);
-			// requestAnimationFrame(frame);
-		}
-
-	    resizeCanvas();
-	    var aMovementArray = createMovementArray(6, 4, 400);
-		var aColorArray = createColorArray(6, 4);
+		window.addEventListener('resize', resizeCanvas, false);
+		resizeCanvas();
+		
+		var aMovementArray = createMovementArray(columns, rows, iTriangleSize);
+		var aColorArray = createColorArray(columns, rows);
 
 		requestAnimationFrame(frame);
 
+		function frame () {
+			draw(aMovementArray, aColorArray);
+			requestAnimationFrame(frame);
+		}
 
 	})();
 	
+
+
+	function resizeCanvas() {
+		iWindowWidth = window.innerWidth;
+		iWindowHeight = window.innerHeight;
+
+		iTriangleSize = (iWindowHeight / 4) / (Math.sqrt(3) / 2);
+		console.log(iTriangleSize);
+		rows = 5;
+		columns = 0;
+		while (columns * iTriangleSize < iWindowWidth + iTriangleSize) columns++;
+			
+		document.getElementById('canvas').width = iWindowWidth;
+		document.getElementById('canvas').height = iWindowHeight;
+	}
 
 	function RandomMovement(center, r, speed) {
 		var angle = Math.random() * Math.PI * 2;
@@ -89,17 +103,17 @@
 
 	function createMovementArray(width, height, sideLength) {
 		var array = [],
-		    xStart = -sideLength / 2,
-		    yStart = 0,
-		    xIncrement = sideLength,
-		    yIncrement = sideLength * Math.sqrt(3) / 2,
-		    x = xStart,
-		    y = yStart;
-
+			xStart = -sideLength / 2,
+			yStart = 0,
+			xIncrement = sideLength,
+			yIncrement = sideLength * Math.sqrt(3) / 2,
+			x = xStart,
+			y = yStart;
+		// width = ~~(width / 2) + 1;
 		for (var i = 0; i < height; i++) {
 			array[i] = []
 			for (var j = 0; j < width; j++) {
-				array[i][j] = RandomMovement(Point(x, y), sideLength / 2 , 0.50);
+				array[i][j] = RandomMovement(Point(x, y), sideLength / 3 , 0.50);
 				x += xIncrement;
 			}
 			y += yIncrement;
@@ -125,8 +139,8 @@
 
 	function draw(a, c) {
 		clear();
-		for (var i = 0; i < a.length; i++) {
-			for (var j = 0; j < a[i].length; j++) {
+		for (var i = 1; i < a.length - 1; i++) {
+			for (var j = 1; j < a[i].length - 1; j++) {
 				a[i][j].move();
 			}
 		}
