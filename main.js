@@ -2,7 +2,9 @@
 (function sway() {
 	var iWindowWidth = window.innerWidth,
 		iWindowHeight = window.innerHeight,
-		iTriangleSize = 100,
+		aMovementArray,
+		aColorArray,
+		iTriangleSize,
 		rows = 0,
 		columns = 0;
 
@@ -10,19 +12,17 @@
 		window.addEventListener('resize', resizeCanvas, false);
 		resizeCanvas();
 		
-		var aMovementArray = createMovementArray(columns, rows, iTriangleSize);
-		var aColorArray = createColorArray(columns, rows);
+		aMovementArray = createMovementArray(columns, rows, iTriangleSize);
+		aColorArray = createColorArray(columns, rows);
 
 		requestAnimationFrame(frame);
 
-		function frame () {
-			draw(aMovementArray, aColorArray);
-			requestAnimationFrame(frame);
-		}
-
 	})();
 	
-
+	function frame () {
+		draw(aMovementArray, aColorArray);
+		requestAnimationFrame(frame);
+	}
 
 	function resizeCanvas() {
 		iWindowWidth = window.innerWidth;
@@ -33,7 +33,10 @@
 		rows = 5;
 		columns = 0;
 		while (columns * iTriangleSize < iWindowWidth + (iTriangleSize * 1.5)) columns++;
-			
+		
+		aMovementArray = createMovementArray(columns, rows, iTriangleSize);
+		aColorArray = createColorArray(columns, rows);
+		
 		document.getElementById('canvas').width = iWindowWidth;
 		document.getElementById('canvas').height = iWindowHeight;
 	}
