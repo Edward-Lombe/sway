@@ -1,35 +1,33 @@
 'use strict';
-(function shiftingBackground () {
+(function sway() {
 
-    window.addEventListener('resize', resizeCanvas, false);
+	(function init() {
+	    window.addEventListener('resize', resizeCanvas, false);
 
-    function resizeCanvas() {
-        document.getElementById('canvas').width = window.innerWidth;
-        document.getElementById('canvas').height = window.innerHeight;
-    }
-    resizeCanvas();
+	    function resizeCanvas() {
+	        document.getElementById('canvas').width = window.innerWidth;
+	        document.getElementById('canvas').height = window.innerHeight;
+	    }
 
-	function RandomAreaCircle(center, r, speed) {
+	    function frame () {
+			draw(aMovementArray, aColorArray);
+			// requestAnimationFrame(frame);
+		}
+
+	    resizeCanvas();
+	    var aMovementArray = createMovementArray(6, 4, 400);
+		var aColorArray = createColorArray(6, 4);
+
+		requestAnimationFrame(frame);
+
+
+	})();
+	
+
+	function RandomMovement(center, r, speed) {
 		var angle = Math.random() * Math.PI * 2;
 		var distance = Math.floor(Math.random() * r);
 		var current = center.copy();
-
-		this.move = function () {
-			var next;
-			do {
-				if (distance > 0) distance = distance - speed;
-				else newDirection();
-				next = current.copy();
-				next.x = current.x + Math.cos(angle) * speed;
-				next.y = current.y + Math.sin(angle) * speed;
-			} while (!inCircle(next));
-			current = next.copy();
-			return next;
-		}
-
-		this.pos = function() {
-			return current;
-		}
 
 		function inCircle(point) {
 			return center.distance(point) < r;
@@ -39,6 +37,26 @@
 			angle = Math.random() * Math.PI * 2;
 			distance = 2 * r;
 		}
+
+		return Object.create(
+			{
+				move : function () {
+					var next;
+					do {
+						if (distance > 0) distance = distance - speed;
+						else newDirection();
+						next = current.copy();
+						next.x = current.x + Math.cos(angle) * speed;
+						next.y = current.y + Math.sin(angle) * speed;
+					} while (!inCircle(next));
+					current = next.copy();
+					return next;
+				},
+				pos : function () {
+					return current;
+				}
+			}
+		);
 	}
 
 	function Point(x, y) {
@@ -69,10 +87,10 @@
 		);
 	}
 
-	function createAreaArray(width, height, sideLength) {
+	function createMovementArray(width, height, sideLength) {
 		var array = [],
-		    xStart = -sideLength,
-		    yStart = -sideLength,
+		    xStart = -sideLength / 2,
+		    yStart = 0,
 		    xIncrement = sideLength,
 		    yIncrement = sideLength * Math.sqrt(3) / 2,
 		    x = xStart,
@@ -81,7 +99,7 @@
 		for (var i = 0; i < height; i++) {
 			array[i] = []
 			for (var j = 0; j < width; j++) {
-				array[i][j] = new RandomAreaCircle(Point(x, y), sideLength / 2 , 0.50);
+				array[i][j] = RandomMovement(Point(x, y), sideLength / 2 , 0.50);
 				x += xIncrement;
 			}
 			y += yIncrement;
@@ -97,15 +115,13 @@
 		for (var i = 0; i < height; i++) {
 			array[i] = [];
 			for (var j = 0; j < width; j++) {
-				// array[i][j] = '#'+Math.floor(Math.random()*16777215).toString(16);
 				array[i][j] = randomColor();
 			}
 		}
 		return array;
 	}
 
-	var a = createAreaArray(14, 11, 150);
-	var c = createColorArray(14, 11);
+
 
 	function draw(a, c) {
 		clear();
@@ -138,12 +154,6 @@
 	}
 
 
-	requestAnimationFrame(frame);
-	function frame () {
-		draw(a, c);
-		requestAnimationFrame(frame);
-	}
-
 	function randomColor() {
 		var colors = ['#F22613','#D91E18','#96281B','#EF4836','#D64541',
 			'#C0392B','#CF000F','#E74C3C','#DB0A5B','#F64747','#F1A9A0',
@@ -163,14 +173,6 @@
 			'#E67E22','#ececec','#6C7A89','#D2D7D3','#EEEEEE','#BDC3C7',
 			'#ECF0F1','#95A5A6','#DADFE1','#ABB7B7','#F2F1EF','#BFBFBF'];
 		return colors[Math.floor(Math.random() * colors.length)];
-	}
-
-	function drawPoint (point) {
-		var canvas = document.getElementById('canvas');
-		if (canvas.getContext) {
-			var ctx = canvas.getContext('2d');
-			ctx.fillRect(point.x, point.y, 2, 2);
-		}
 	}
 
 	function drawTriangle (point1, point2, point3, color) {
